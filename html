@@ -1,104 +1,142 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora Equação 1º Grau</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calculadora Equação 1º Grau Escolar</title>
 
 <style>
 body{
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, sans-serif;
     background:#0f172a;
     color:#fff;
     display:flex;
     justify-content:center;
-    align-items:center;
-    height:100vh;
+    padding:20px;
 }
 .container{
+    width:460px;
     background:#1e293b;
-    padding:30px;
-    border-radius:12px;
-    width:350px;
+    padding:20px;
+    border-radius:10px;
     box-shadow:0 0 20px #000;
 }
-h1{
-    text-align:center;
-    margin-bottom:20px;
-}
-input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border:none;
-    border-radius:6px;
-    font-size:18px;
-}
-button{
+input, button{
     width:100%;
     padding:10px;
     margin-top:10px;
-    background:#38bdf8;
     border:none;
     border-radius:6px;
-    font-size:18px;
-    cursor:pointer;
+    font-size:16px;
 }
-button:hover{
-    background:#0ea5e9;
-}
-#resultado{
-    margin-top:20px;
+button{background:#38bdf8; cursor:pointer;}
+button:hover{background:#0ea5e9;}
+#passos,#resultado,#historico{
+    margin-top:15px;
     background:#0f172a;
     padding:10px;
     border-radius:6px;
-    min-height:80px;
+    font-size:14px;
 }
+canvas{background:#fff;margin-top:15px;border-radius:6px;}
 </style>
 </head>
 
 <body>
-
 <div class="container">
-    <h1>Equação 1º Grau</h1>
+    <h2>Equação do 1º Grau — Escolar</h2>
 
-    <label>Valor de a:</label>
-    <input type="number" id="a" placeholder="Ex: 2">
-
-    <label>Valor de b:</label>
-    <input type="number" id="b" placeholder="Ex: 4">
+    <input type="text" id="eq" placeholder="Ex: 2x + 4 = 6x - 10">
 
     <button onclick="resolver()">Resolver</button>
+    <button onclick="window.print()">Exportar PDF</button>
 
+    <div id="passos"></div>
     <div id="resultado"></div>
+
+    <canvas id="grafico" width="420" height="300"></canvas>
+
+    <h3>Histórico</h3>
+    <div id="historico"></div>
 </div>
 
 <script>
-function resolver(){
-    let a = parseFloat(document.getElementById("a").value);
-    let b = parseFloat(document.getElementById("b").value);
-    let res = document.getElementById("resultado");
+let historico = [];
 
-    if(isNaN(a) || isNaN(b)){
-        res.innerHTML = "Preencha os valores corretamente!";
-        return;
-    }
+function parseLado(exp){
+    exp = exp.replace(/-/g,'+-');
+    let termos = exp.split('+');
+    let a = 0, b = 0;
+
+    termos.forEach(t=>{
+        if(t.includes('x')){
+            let coef = t.replace('x','');
+            if(coef === '' || coef === '+') coef = 1;
+            if(coef === '-') coef = -1;
+            a += parseFloat(coef);
+        } else if(t.trim() !== ''){
+            b += parseFloat(t);
+        }
+    });
+    return {a,b};
+}
+
+function resolver(){
+    let eq = document.getElementById("eq").value.replace(/\s+/g,'');
+    let [e1,e2] = eq.split('=');
+
+    let L1 = parseLado(e1);
+    let L2 = parseLado(e2);
+
+    let a = L1.a - L2.a;
+    let b = L2.b - L1.b;
+
+    let passos = document.getElementById("passos");
+    let resultado = document.getElementById("resultado");
 
     if(a === 0){
-        res.innerHTML = "Não é equação do 1º grau (a ≠ 0).";
+        resultado.innerHTML = "Sem solução ou infinitas soluções.";
         return;
     }
 
-    let x = -b / a;
+    let x = b / a;
 
-    res.innerHTML = `
-        <b>Passo 1:</b> Equação: ${a}x + ${b} = 0 <br><br>
-        <b>Passo 2:</b> Isolando x: ${a}x = -${b} <br><br>
-        <b>Passo 3:</b> x = -${b} / ${a} <br><br>
-        <b>Resultado:</b> x = <b>${x}</b>
+    passos.innerHTML = `
+    <b>Passo 1:</b> Organizando termos:<br>
+    (${L1.a}x + ${L1.b}) = (${L2.a}x + ${L2.b})<br><br>
+
+    <b>Passo 2:</b> Levando termos com x para a esquerda e números para a direita:<br>
+    ${a}x = ${b}<br><br>
+
+    <b>Passo 3:</b> x = ${b} / ${a}
     `;
+
+    resultado.innerHTML = `<b>Resultado: x = ${x}</b>`;
+
+    desenharGrafico(L1.a, L1.b);
+    adicionarHistorico(eq,x);
+}
+
+function desenharGrafico(a,b){
+    let canvas = document.getElementById("grafico");
+    let ctx = canvas.getContext("2d");
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    ctx.beginPath();
+    for(let px=0; px<canvas.width; px++){
+        let x = (px-210)/20;
+        let y = a*x + b;
+        let py = 150 - y*20;
+        if(px===0) ctx.moveTo(px,py);
+        else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+}
+
+function adicionarHistorico(eq,x){
+    historico.push(`${eq} → x = ${x}`);
+    document.getElementById("historico").innerHTML = historico.join("<br>");
 }
 </script>
-
 </body>
 </html>
