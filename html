@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Equação do 1º Grau</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 50px;
+    }
+    input {
+      width: 60px;
+      padding: 5px;
+      margin: 5px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    #resultado {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Calculadora de Equação do 1º Grau</h2>
+  <p>Forma: ax + b = 0</p>
+
+  <input type="number" id="a" placeholder="a"> x +
+  <input type="number" id="b" placeholder="b"> = 0
+
+  <br>
+  <button onclick="calcular()">Calcular</button>
+
+  <div id="resultado"></div>
+
+  <script>
+    function calcular() {
+      let a = parseFloat(document.getElementById("a").value);
+      let b = parseFloat(document.getElementById("b").value);
+      let resultado = document.getElementById("resultado");
+
+      if (isNaN(a) || isNaN(b)) {
+        resultado.innerHTML = "Digite valores válidos!";
+        return;
+      }
+
+      if (a === 0) {
+        resultado.innerHTML = "Não é uma equação do 1º grau.";
+        return;
+      }
+
+      let x = -b / a;
+      resultado.innerHTML = "Resultado: x = " + x;
+    }
+  </script>
+
+</body>
+</html>
