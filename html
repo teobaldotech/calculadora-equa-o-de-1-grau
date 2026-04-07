@@ -1,65 +1,104 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Calculadora de Equação do 1º Grau</title>
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      margin-top: 50px;
-    }
-    input {
-      width: 60px;
-      padding: 5px;
-      margin: 5px;
-      text-align: center;
-    }
-    button {
-      padding: 10px 20px;
-      margin-top: 10px;
-      cursor: pointer;
-    }
-    #resultado {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: bold;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Equação 1º Grau</title>
+
+<style>
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#0f172a;
+    color:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+.container{
+    background:#1e293b;
+    padding:30px;
+    border-radius:12px;
+    width:350px;
+    box-shadow:0 0 20px #000;
+}
+h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border:none;
+    border-radius:6px;
+    font-size:18px;
+}
+button{
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    background:#38bdf8;
+    border:none;
+    border-radius:6px;
+    font-size:18px;
+    cursor:pointer;
+}
+button:hover{
+    background:#0ea5e9;
+}
+#resultado{
+    margin-top:20px;
+    background:#0f172a;
+    padding:10px;
+    border-radius:6px;
+    min-height:80px;
+}
+</style>
 </head>
+
 <body>
 
-  <h2>Calculadora de Equação do 1º Grau</h2>
-  <p>Forma: ax + b = 0</p>
+<div class="container">
+    <h1>Equação 1º Grau</h1>
 
-  <input type="number" id="a" placeholder="a"> x +
-  <input type="number" id="b" placeholder="b"> = 0
+    <label>Valor de a:</label>
+    <input type="number" id="a" placeholder="Ex: 2">
 
-  <br>
-  <button onclick="calcular()">Calcular</button>
+    <label>Valor de b:</label>
+    <input type="number" id="b" placeholder="Ex: 4">
 
-  <div id="resultado"></div>
+    <button onclick="resolver()">Resolver</button>
 
-  <script>
-    function calcular() {
-      let a = parseFloat(document.getElementById("a").value);
-      let b = parseFloat(document.getElementById("b").value);
-      let resultado = document.getElementById("resultado");
+    <div id="resultado"></div>
+</div>
 
-      if (isNaN(a) || isNaN(b)) {
-        resultado.innerHTML = "Digite valores válidos!";
+<script>
+function resolver(){
+    let a = parseFloat(document.getElementById("a").value);
+    let b = parseFloat(document.getElementById("b").value);
+    let res = document.getElementById("resultado");
+
+    if(isNaN(a) || isNaN(b)){
+        res.innerHTML = "Preencha os valores corretamente!";
         return;
-      }
-
-      if (a === 0) {
-        resultado.innerHTML = "Não é uma equação do 1º grau.";
-        return;
-      }
-
-      let x = -b / a;
-      resultado.innerHTML = "Resultado: x = " + x;
     }
-  </script>
+
+    if(a === 0){
+        res.innerHTML = "Não é equação do 1º grau (a ≠ 0).";
+        return;
+    }
+
+    let x = -b / a;
+
+    res.innerHTML = `
+        <b>Passo 1:</b> Equação: ${a}x + ${b} = 0 <br><br>
+        <b>Passo 2:</b> Isolando x: ${a}x = -${b} <br><br>
+        <b>Passo 3:</b> x = -${b} / ${a} <br><br>
+        <b>Resultado:</b> x = <b>${x}</b>
+    `;
+}
+</script>
 
 </body>
 </html>
